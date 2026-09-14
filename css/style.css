@@ -328,12 +328,21 @@ button:focus-visible {
   width: max-content;
   padding: 14px 5px;
   animation: strip-run 68s linear infinite;
+
+  /* Hand the track to the compositor so it scrolls on its own layer.
+     Without this the browser repaints the whole strip every frame, which
+     is what makes it stutter on phones. */
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
 }
-.strip:hover .strip__track { animation-play-state: paused; }
+
+/* The strip never pauses. It used to stop on :hover, but a tap on a phone
+   leaves the element stuck in :hover until you tap somewhere else — so the
+   strip would freeze and only restart later. Motion is now continuous. */
 
 @keyframes strip-run {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }   /* frames are duplicated once */
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }   /* frames are duplicated once */
 }
 
 /* Frames keep their own proportions — some stills are upright, the
@@ -353,7 +362,11 @@ button:focus-visible {
   filter: saturate(0.94);
   transition: transform 0.7s ease, filter 0.5s ease;
 }
-.frame:hover img { transform: scale(1.04); filter: saturate(1.05); }
+/* only on devices with a real pointer, so a tap cannot leave a frame
+   stuck at 1.04 with no way to un-hover it */
+@media (hover: hover) and (pointer: fine) {
+  .frame:hover img { transform: scale(1.04); filter: saturate(1.05); }
+}
 
 .strip__note {
   text-align: center;
@@ -390,7 +403,9 @@ button:focus-visible {
   object-fit: cover;
   transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.3, 1);
 }
-.folder:hover img { transform: scale(1.05); }
+@media (hover: hover) and (pointer: fine) {
+  .folder:hover img { transform: scale(1.05); }
+}
 .folder::after {
   content: "";
   position: absolute; inset: 0;
@@ -598,7 +613,9 @@ button:focus-visible {
   object-fit: cover;
   transition: opacity 0.3s ease, transform 0.8s cubic-bezier(0.2, 0.7, 0.3, 1);
 }
-.gallery figure:hover img { opacity: 0.9; transform: scale(1.03); }
+@media (hover: hover) and (pointer: fine) {
+  .gallery figure:hover img { opacity: 0.9; transform: scale(1.03); }
+}
 
 /* lightbox */
 .lightbox {

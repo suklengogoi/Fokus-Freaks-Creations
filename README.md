@@ -80,6 +80,20 @@ Links to `#contact`, `tel:`, WhatsApp and Instagram are left alone, and the
 class is cleared on every `pageshow` so Back and Forward never land on a blank
 screen.
 
+## The moving strip
+
+It runs continuously and never pauses. It used to stop on `:hover`, but on a
+phone a tap leaves an element stuck in `:hover` until you tap elsewhere, so the
+strip would freeze and only restart later. All hover effects on the site are now
+inside `@media (hover: hover) and (pointer: fine)` for the same reason.
+
+The track is promoted to its own compositor layer (`will-change: transform` plus
+`translate3d`) so the browser does not repaint the strip on every frame.
+
+The four moving frames are animated WebP at 83ms per frame. If you replace one,
+keep that timing — Pillow drops frame durations on re-save unless you pass them
+back explicitly.
+
 ## Films
 
 Only one film can play at a time. `script.js` listens to each video element's
