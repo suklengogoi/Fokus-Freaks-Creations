@@ -1,0 +1,706 @@
+/* ============================================================
+   FOKUS FREAKS CREATIONS — stylesheet
+   Written to be readable. Sections in this order:
+   1. Tokens (colours, type, spacing)
+   2. Base / reset
+   3. Header: reach bar + navigation
+   4. Hero
+   5. Opening statement
+   6. Moving frame strip
+   7. Folders (gallery entry tiles)
+   8. Pinned picture with scrolling text
+   9. Contact + footer
+  10. Gallery pages + lightbox
+  11. Films page
+  ============================================================ */
+
+/* ---------- 1. TOKENS ---------- */
+:root {
+  /* colour: warm dark ground, muga-silk gold, bone text */
+  --ink:      #17120E;
+  --ink-2:    #1F1812;
+  --ink-3:    #2A211A;
+  --bone:     #F2EBDF;
+  --mist:     #9A8D7E;
+  --muga:     #C6A664;
+  --line:     rgba(242, 235, 223, 0.14);
+
+  /* type */
+  --display: "Bodoni Moda", Georgia, "Times New Roman", serif;
+  --text:    "Jost", "Helvetica Neue", Arial, sans-serif;
+
+  /* type scale (perfect fourth, 1.333) */
+  --t--1: 0.78rem;
+  --t-0:  1rem;
+  --t-1:  1.333rem;
+  --t-2:  1.777rem;
+  --t-3:  2.369rem;
+
+  /* spacing — one scale, used everywhere. Change these, not individual rules. */
+  --gutter: clamp(1.25rem, 4vw, 3.5rem);
+  --band:   clamp(2.5rem, 5vh, 4.25rem); /* padding above and below a section */
+  --band-sm: clamp(1.75rem, 3.4vh, 2.75rem); /* the tighter version, around the strip */
+
+  /* the pinned closing section, expressed as screen-heights of scroll */
+  --pin-lead: 18vh;   /* before the first line appears */
+  --pin-gap:  24vh;   /* between the lines */
+  --pin-tail: 42vh;   /* the closing frame: the photograph alone, still pinned */
+
+  --head-h: 108px;                        /* reach bar + nav height on desktop */
+}
+
+/* ---------- 2. BASE ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--bone);
+  font-family: var(--text);
+  font-weight: 300;
+  font-size: var(--t-0);
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+}
+
+img, video { display: block; max-width: 100%; }
+
+a { color: inherit; text-decoration: none; }
+
+h1, h2, h3 {
+  font-family: var(--display);
+  font-weight: 400;
+  line-height: 1.12;
+  margin: 0;
+}
+
+p { margin: 0 0 1.15em; }
+p:last-child { margin-bottom: 0; }
+
+/* keyboard users must always see where they are */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--muga);
+  outline-offset: 4px;
+}
+
+.wrap {
+  width: min(1180px, 100% - (var(--gutter) * 2));
+  margin-inline: auto;
+}
+
+.measure { max-width: 46ch; }             /* keeps prose under ~80 characters */
+
+/* a thin gold rule used to open a section */
+.rule {
+  width: 56px;
+  height: 1px;
+  background: var(--muga);
+  border: 0;
+  margin: 0 0 1.75rem;
+}
+.rule--center { margin-inline: auto; }
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+/* ---------- 3. HEADER ---------- */
+.site-head {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 60;
+  transition: background-color 0.35s ease, backdrop-filter 0.35s ease;
+}
+/* solid once the visitor scrolls past the hero video */
+.site-head.is-stuck {
+  background: rgba(23, 18, 14, 0.94);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+}
+
+/* --- the reach bar: Instagram, Facebook, WhatsApp, phone.
+       Sits ABOVE the navigation, not in the footer. --- */
+.reach {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.55rem var(--gutter);
+  background: rgba(0, 0, 0, 0.38);
+  border-bottom: 1px solid var(--line);
+  font-size: var(--t--1);
+  letter-spacing: 0.06em;
+}
+.reach__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--bone);
+  opacity: 0.82;
+  transition: opacity 0.25s ease, color 0.25s ease;
+}
+.reach__item:hover { opacity: 1; color: var(--muga); }
+.reach__item svg { width: 15px; height: 15px; fill: currentColor; flex: none; }
+.reach__item--call { color: var(--muga); opacity: 1; font-weight: 400; }
+
+/* --- navigation: links, centred wordmark, links --- */
+.nav {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 1.1rem var(--gutter);
+}
+.nav__mark {
+  grid-column: 2;
+  text-align: center;
+  font-family: var(--display);
+  font-size: 1.05rem;
+  letter-spacing: 0.34em;
+  text-indent: 0.34em;
+  line-height: 1.3;
+}
+.nav__mark span {
+  display: block;
+  font-family: var(--text);
+  font-size: 0.56rem;
+  letter-spacing: 0.44em;
+  text-indent: 0.44em;
+  color: var(--muga);
+  font-weight: 400;
+}
+.nav__side {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: var(--t--1);
+  letter-spacing: 0.12em;
+}
+.nav__side--left  { grid-column: 1; justify-content: flex-start; }
+.nav__side--right { grid-column: 3; justify-content: flex-end; }
+
+.nav__side a {
+  position: relative;
+  padding-bottom: 3px;
+  color: var(--bone);
+  opacity: 0.8;
+  transition: opacity 0.25s ease;
+}
+.nav__side a::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 100%; height: 1px;
+  background: var(--muga);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+.nav__side a:hover { opacity: 1; }
+.nav__side a:hover::after,
+.nav__side a[aria-current="page"]::after { transform: scaleX(1); }
+.nav__side a[aria-current="page"] { opacity: 1; }
+
+.nav__toggle {
+  display: none;
+  grid-column: 3;
+  justify-self: end;
+  background: none;
+  border: 1px solid var(--line);
+  color: var(--bone);
+  font-family: var(--text);
+  font-size: var(--t--1);
+  letter-spacing: 0.14em;
+  padding: 0.5rem 0.9rem;
+  cursor: pointer;
+}
+
+/* ---------- 4. HERO (full-bleed film, quiet type over it) ---------- */
+.hero {
+  position: relative;
+  height: 100svh;
+  min-height: 560px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.hero__video {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+/* darkens the film so the type stays readable whatever frame is showing */
+.hero__veil {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(23,18,14,0.74) 0%, rgba(23,18,14,0.42) 40%, rgba(23,18,14,0.86) 100%);
+}
+.hero__copy {
+  position: relative;
+  text-align: center;
+  padding: var(--head-h) var(--gutter) 0;
+}
+.hero__copy h1 {
+  font-size: clamp(2.6rem, 7.4vw, 5.6rem);
+  font-style: italic;
+  letter-spacing: -0.015em;
+  margin-bottom: 1.4rem;
+}
+.hero__sub {
+  font-size: clamp(0.82rem, 1.5vw, 1rem);
+  letter-spacing: 0.2em;
+  color: var(--bone);
+  opacity: 0.86;
+  max-width: 46ch;
+  margin-inline: auto;
+}
+/* ---------- 5. OPENING STATEMENT (words only — no photographs) ---------- */
+.opening {
+  padding: var(--band) 0;
+  text-align: center;
+}
+.opening h2 {
+  font-size: clamp(1.6rem, 3.4vw, var(--t-3));
+  max-width: 20ch;
+  margin: 0 auto 1.8rem;
+}
+.opening__body {
+  max-width: 58ch;
+  margin-inline: auto;
+  color: var(--mist);
+  line-height: 1.95;
+}
+.opening__body strong { color: var(--bone); font-weight: 400; }
+
+.craft {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem 2.25rem;
+  list-style: none;
+  margin: 1.8rem 0 0;
+  padding: 0;
+  font-size: var(--t--1);
+  letter-spacing: 0.14em;
+  color: var(--mist);
+}
+
+/* ---------- 6. MOVING FRAME STRIP ----------
+   A 35mm strip that runs on its own. Every frame links to the
+   folder it came from, so a visitor sees the work without the
+   home page turning into a gallery. */
+.strip {
+  position: relative;
+  padding: 0.85rem 0;
+  background: var(--ink-2);
+  border-block: 1px solid var(--line);
+  overflow: hidden;
+}
+/* the sprocket holes, top and bottom */
+.strip::before,
+.strip::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 12px;
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--ink) 0 14px,
+    transparent 14px 34px
+  );
+  z-index: 2;
+  pointer-events: none;
+}
+.strip::before { top: 0; }
+.strip::after  { bottom: 0; }
+
+.strip__track {
+  display: flex;
+  gap: 10px;
+  width: max-content;
+  padding: 14px 5px;
+  animation: strip-run 68s linear infinite;
+}
+.strip:hover .strip__track { animation-play-state: paused; }
+
+@keyframes strip-run {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }   /* frames are duplicated once */
+}
+
+/* Frames keep their own proportions — some stills are upright, the
+   moving frames are landscape — which is how a real contact strip looks. */
+.frame {
+  position: relative;
+  flex: none;
+  height: clamp(176px, 26vh, 268px);
+  overflow: hidden;
+  background: var(--ink-3);
+}
+.frame img {
+  height: 100%;
+  width: auto;
+  max-width: none;
+  object-fit: cover;
+  filter: saturate(0.94);
+  transition: transform 0.7s ease, filter 0.5s ease;
+}
+.frame:hover img { transform: scale(1.04); filter: saturate(1.05); }
+
+.strip__note {
+  text-align: center;
+  font-size: var(--t--1);
+  letter-spacing: 0.18em;
+  color: var(--mist);
+  margin: 0.4rem 0 0;
+}
+
+/* ---------- 7. FOLDERS ----------
+   Three tall tiles. The photographs live behind these, not on
+   the home page. */
+.folders { padding: var(--band-sm) 0 var(--band); }
+
+.folders__title {
+  font-size: clamp(1.6rem, 3.4vw, var(--t-3));
+  margin-bottom: 1.6rem;
+}
+
+.folder-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(0.75rem, 1.6vw, 1.4rem);
+}
+.folder {
+  position: relative;
+  display: block;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: var(--ink-3);
+}
+.folder img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+.folder:hover img { transform: scale(1.05); }
+.folder::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(23,18,14,0) 42%, rgba(23,18,14,0.86) 100%);
+}
+.folder__label {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  z-index: 2;
+  padding: 1.5rem 1.4rem;
+}
+.folder__label h3 {
+  font-size: var(--t-1);
+  margin-bottom: 0.3rem;
+}
+.folder__label span {
+  font-size: var(--t--1);
+  letter-spacing: 0.16em;
+  color: var(--muga);
+}
+
+/* ---------- 8. PINNED PICTURE, SCROLLING TEXT ----------
+   The photograph is held still by position:sticky while the
+   paragraphs travel over it. */
+.pinned { position: relative; }
+
+.pinned__media {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  background: var(--ink);
+}
+
+/* The photograph is upright (4:5) and the section is a wide screen, so a
+   crop is unavoidable. object-position decides WHICH part survives, and the
+   right answer changes with the shape of the window — hence the rules below.
+   The couple sit between 48% and 85% of the picture's height. */
+.pinned__media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 62%;
+}
+
+/* the veil that keeps the words readable, plus a little weight top and bottom
+   so the crop reads as a deliberate frame rather than an accident */
+.pinned__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(23,18,14,0.78) 0%, rgba(23,18,14,0.34) 26%,
+                            rgba(23,18,14,0.34) 68%, rgba(23,18,14,0.82) 100%),
+    linear-gradient(rgba(23,18,14,0.30), rgba(23,18,14,0.30));
+}
+
+/* Wide and short — 3:2 through 2:1, which covers every normal laptop and
+   desktop. Only 40-53% of the picture's height fits, so the crop sits low
+   enough to hold the couple whole with a little water beneath them. */
+@media (min-aspect-ratio: 3 / 2) and (max-aspect-ratio: 2 / 1) {
+  .pinned__media img { object-position: 50% 78%; }
+}
+/* 4:3 and squarer landscape windows — more of the picture fits, so the crop
+   does not need to sit as low. */
+@media (min-aspect-ratio: 1 / 1) and (max-aspect-ratio: 3 / 2) {
+  .pinned__media img { object-position: 50% 72%; }
+}
+/* ultrawide: the couple are taller than the visible band, so hold their
+   faces and let the water go rather than cropping their heads. */
+@media (min-aspect-ratio: 2 / 1) {
+  .pinned__media img { object-position: 50% 72%; }
+}
+/* upright screens: the picture nearly fills the frame on its own */
+@media (max-aspect-ratio: 1 / 1) {
+  .pinned__media img { object-position: 50% 52%; }
+}
+
+.pinned__scroll {
+  position: relative;
+  margin-top: -100svh;
+  padding: var(--pin-lead) var(--gutter) var(--pin-tail);
+  text-align: center;
+}
+.pinned__scroll > * + * { margin-top: var(--pin-gap); }
+
+.pinned__line {
+  font-family: var(--display);
+  font-size: clamp(1.35rem, 3.1vw, 2.1rem);
+  line-height: 1.4;
+  max-width: 24ch;
+  margin-inline: auto;
+  text-shadow: 0 2px 26px rgba(0, 0, 0, 0.55);
+}
+.pinned__line em { font-style: italic; color: var(--muga); }
+
+/* On a wide screen the couple sit in the middle of the frame, so centred text
+   would land on their faces. Move the words into the left third instead —
+   they clear the subject and the section reads more like a printed spread.
+   Upright screens keep the text centred, because there the couple sit low. */
+@media (min-aspect-ratio: 1 / 1) and (min-width: 1024px) {
+  .pinned__scroll { text-align: left; }
+  .pinned__line {
+    margin-inline: 0;
+    max-width: 26ch;
+    padding-left: clamp(1rem, 4vw, 4.5rem);
+  }
+}
+
+/* ---------- 9. CONTACT + FOOTER ---------- */
+.contact {
+  padding: var(--band) 0;
+  text-align: center;
+}
+.contact h2 {
+  font-size: clamp(1.7rem, 4vw, 3rem);
+  max-width: 18ch;
+  margin: 0 auto 1.2rem;
+}
+.contact__lead { color: var(--mist); max-width: 48ch; margin-inline: auto; }
+
+.contact__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.9rem;
+  margin-top: 2.4rem;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.95rem 1.9rem;
+  border: 1px solid var(--muga);
+  color: var(--muga);
+  font-size: var(--t--1);
+  letter-spacing: 0.16em;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+.btn svg { width: 16px; height: 16px; fill: currentColor; }
+.btn:hover { background: var(--muga); color: var(--ink); }
+.btn--solid { background: var(--muga); color: var(--ink); }
+.btn--solid:hover { background: transparent; color: var(--muga); }
+
+.contact__numbers {
+  margin-top: 2.2rem;
+  font-size: var(--t-1);
+  font-family: var(--display);
+  letter-spacing: 0.04em;
+}
+.contact__numbers a { border-bottom: 1px solid var(--line); }
+.contact__numbers a:hover { border-color: var(--muga); color: var(--muga); }
+.contact__where {
+  margin-top: 0.7rem;
+  font-size: var(--t--1);
+  letter-spacing: 0.16em;
+  color: var(--mist);
+}
+
+.site-foot {
+  border-top: 1px solid var(--line);
+  padding: 2rem 0;
+  font-size: var(--t--1);
+  letter-spacing: 0.08em;
+  color: var(--mist);
+}
+.site-foot .wrap {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+/* ---------- 10. GALLERY PAGES ---------- */
+.page-head {
+  padding: calc(var(--head-h) + var(--band)) 0 2.2rem;
+  text-align: center;
+}
+.page-head h1 {
+  font-size: clamp(2rem, 5.2vw, 3.6rem);
+  font-style: italic;
+  margin-bottom: 1rem;
+}
+.page-head p { color: var(--mist); max-width: 50ch; margin-inline: auto; }
+
+/* An even grid. The photographs are all roughly 4:5, so a regular
+   grid sits quieter than a staggered one. */
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(0.6rem, 1.4vw, 1.1rem);
+  padding-bottom: var(--band);
+}
+.gallery figure {
+  margin: 0;
+  background: var(--ink-2);
+  cursor: zoom-in;
+  overflow: hidden;
+}
+.gallery img {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  transition: opacity 0.3s ease, transform 0.8s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+.gallery figure:hover img { opacity: 0.9; transform: scale(1.03); }
+
+/* lightbox */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: none;
+  place-items: center;
+  background: rgba(11, 8, 6, 0.96);
+  padding: clamp(1rem, 5vw, 4rem);
+}
+.lightbox.is-open { display: grid; }
+.lightbox img {
+  max-width: 100%;
+  max-height: 86svh;
+  width: auto;
+  margin-inline: auto;
+}
+.lightbox__btn {
+  position: absolute;
+  background: none;
+  border: 0;
+  color: var(--bone);
+  font-family: var(--display);
+  font-size: 2rem;
+  line-height: 1;
+  padding: 0.8rem 1.1rem;
+  cursor: pointer;
+  opacity: 0.75;
+}
+.lightbox__btn:hover { opacity: 1; color: var(--muga); }
+.lightbox__close { top: 1rem; right: 1rem; font-size: 1.6rem; }
+.lightbox__prev  { left: 0.5rem;  top: 50%; transform: translateY(-50%); }
+.lightbox__next  { right: 0.5rem; top: 50%; transform: translateY(-50%); }
+
+/* ---------- 11. FILMS PAGE ---------- */
+.films { padding-bottom: var(--band); display: grid; gap: clamp(2.5rem, 6vw, 4.5rem); }
+.film { margin-inline: auto; width: 100%; }
+.film--wide     { max-width: 980px; }
+.film--vertical { max-width: 420px; }
+.film video { width: 100%; height: auto; background: #000; }
+.film figcaption {
+  margin-top: 0.9rem;
+  font-size: var(--t--1);
+  letter-spacing: 0.16em;
+  color: var(--mist);
+  text-align: center;
+}
+
+/* ---------- PAGE TRANSITION ----------
+   The fade-in is an animation, not a starting opacity, so if the JavaScript
+   never runs the page is still visible. The fade-out is added by script.js
+   just before the browser leaves the page. */
+body { animation: page-in 0.32s ease-out both; }
+@keyframes page-in { from { opacity: 0; } to { opacity: 1; } }
+
+body.is-leaving { opacity: 0; transition: opacity 0.26s ease-in; }
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 900px) {
+  :root { --head-h: 96px; }
+
+  .reach { justify-content: center; gap: 1.15rem; }
+  .reach__item span { display: none; }          /* logos only on small screens */
+  .reach__item--call span { display: inline; }  /* except the number itself */
+  .reach__item svg { width: 17px; height: 17px; }
+
+  .nav { grid-template-columns: 1fr auto; }
+  .nav__mark { grid-column: 1; text-align: left; }
+  .nav__toggle { display: block; grid-column: 2; }
+
+  .nav__side {
+    display: none;
+    grid-column: 1 / -1;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding-top: 1rem;
+  }
+  .nav.is-open .nav__side { display: flex; }
+  .nav.is-open { background: rgba(23, 18, 14, 0.97); }
+  .nav__side a { display: block; padding: 0.65rem 0; font-size: var(--t-0); }
+
+  .folder-grid { grid-template-columns: 1fr 1fr; }
+  .folder-grid > :last-child { grid-column: 1 / -1; aspect-ratio: 16 / 10; }
+
+  .gallery { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 560px) {
+  .folder-grid { grid-template-columns: 1fr; }
+  .folder-grid > :last-child { aspect-ratio: 3 / 4; }
+  .gallery { grid-template-columns: 1fr; }
+  :root { --pin-gap: 26vh; --pin-lead: 14vh; --pin-tail: 40vh; }
+  .contact__actions .btn { flex: 1 1 100%; justify-content: center; }
+}
+
+/* visitors who ask their device for less movement get a still strip */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .strip__track { animation: none; }
+  .strip { overflow-x: auto; }
+  body { animation: none; }
+  body.is-leaving { opacity: 1; transition: none; }
+  * { transition-duration: 0.01ms !important; }
+}
